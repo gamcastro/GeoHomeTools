@@ -126,6 +126,13 @@ function Get-WindowState {
 }
 
 function Set-WindowPosition{
+ param(
+     [int]$X,
+     [int]$Y,
+     [int]$Width,
+     [int]$Height
+
+ )
     Add-Type -Name Window -Namespace Console -MemberDefinition @'
 [DllImport("Kernel32.dll")] 
 public static extern IntPtr GetConsoleWindow();
@@ -134,5 +141,5 @@ public static extern bool MoveWindow(IntPtr hWnd, int X, int Y, int W, int H);
 '@
 $consoleHWND = [Console.Window]::GetConsoleWindow()
 Start-Sleep -Seconds 1
-[Console.Window]::MoveWindow($consoleHWND,200,200,600,400)
+[Console.Window]::MoveWindow($consoleHWND,$X,$Y,$Width,$Height)
 }
