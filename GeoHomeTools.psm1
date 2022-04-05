@@ -1,4 +1,4 @@
-function Remove-GeoDownloadedVideos{
+﻿function Remove-GeoDownloadedVideos{
 <#
 .SYNOPSIS
 Ferramenta para deletar arquivos de vídeos baixados
