@@ -31,8 +31,7 @@ function Remove-GeoEmptyFolder{
         [string]$Path = "\."
     )
     BEGIN {
-       
-
+  
     }
     PROCESS{
         Write-Verbose 'Verificando se o caminho dado é um diretório.'
@@ -211,5 +210,39 @@ function New-GeoAlarme{
         }
     }
     END {}
+}
+
+function Get-GEOFilesOrdered{
+    [CmdletBinding()]
+    param(
+        [string]$Path = "\.",
+        [int]$Last = 10,
+        [string]$FileType = 'pdf'
+
+    )
+    BEGIN{
+       
+    }
+    PROCESS{
+        $params = @{'Path' = $Path
+        'Attributes' = 'Archive'
+        'Filter' = "*.$FileType"           
+    }
+        $result = Get-ChildItem @params|
+        Sort-Object -Property LastWriteTime -Descending |
+        Select-Object -First $Last |
+        Select-Object Name,LastWriteTime
+            
+
+        foreach ($arquivo in $result){
+            $props = @{'Nome' = $arquivo.Name
+                    'DataHoraCriação' = $arquivo.LastWriteTime
+            }
+            $obj = New-Object -TypeName psobject -Property $props
+            Write-Output $obj
+        }        
+       
+    }
+    END{}
 }
 
