@@ -215,7 +215,7 @@ function New-GeoAlarme{
 function Get-GEOFilesOrdered{
     [CmdletBinding()]
     param(
-        [string]$Path = "\.",
+        [string]$Path = ".\",
         [int]$Last = 10,
         [string]$FileType = 'pdf'
 
