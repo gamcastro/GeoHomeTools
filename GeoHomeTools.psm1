@@ -25,6 +25,33 @@ Retira com confirmacao, todos os arquivos de videos da pasta padrão $home\downl
     END{}
 }
 
+function Remove-GeoEmptyFolder{
+    [Cmdletbinding()]
+    param(
+        [string]$Path = "\."
+    )
+    BEGIN {
+       
+
+    }
+    PROCESS{
+        Write-Verbose 'Verificando se o caminho dado é um diretório.'
+        $obj = Test-Path $Path -PathType Container
+        if ($obj){
+            Write-Verbose 'Realizando a contagem de objetos dentro do diretório informado'
+            $contador = Get-ChildItem -Path $Path -Recurse | Measure-Object
+            $contador = $contador.Count
+        }
+        if ($contador -eq 0){
+            Write-Verbose "Removendo o diretório informado"
+            Remove-Item $Path
+        }
+    }
+    END{
+
+    }
+
+}
 function Resize-Console {
     <#
         .SYNOPSIS
@@ -143,3 +170,46 @@ $consoleHWND = [Console.Window]::GetConsoleWindow()
 Start-Sleep -Seconds 1
 [Console.Window]::MoveWindow($consoleHWND,$X,$Y,$Width,$Height)
 }
+
+function Start-GeoChrome{
+    [CmdletBinding()]
+    param(
+        [string]$Url
+    )
+    BEGIN {
+        $chromePath = 'C:\Program Files\Google\Chrome\Application\chrome.exe'
+    }
+    PROCESS{
+        if (-Not $PSBoundParameters.ContainsKey('URL')){
+            Start-Process -FilePath $chromePath
+        } else {
+            Start-Process -FilePath $chromePath $Url
+        }
+    }
+    END {
+
+    }
+}
+
+function New-GeoAlarme{
+    [CmdletBinding()]
+    param(
+        [int]$Minutes
+    )
+    BEGIN{
+        $alarme = $false
+        $agora = Get-Date
+    }
+    PROCESS{
+        while(-not ($alarme)){
+            if ($agora.AddMinutes($Minutes) -lt (Get-Date)){
+                $alarme = $true
+                [console]::Beep(2000,1000)
+            }
+            Write-Progress -Activity "Alarme" -Status "Indo"
+            Start-Sleep -Seconds 5
+        }
+    }
+    END {}
+}
+
