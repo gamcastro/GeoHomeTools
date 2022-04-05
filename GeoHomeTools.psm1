@@ -213,12 +213,36 @@ function New-GeoAlarme{
 }
 
 function Get-GEOFilesOrdered{
+    <#
+    .SYNOPSIS
+    Lista arquivos de um determinado tipo por data de criação
+
+    .DESCRIPTION
+    A ferramenta Get-GEOFilesOrdered obtem arquivos de um determinado tipo de um
+    determinado caminho ordenado por data da criação do arquivo.
+    Você tem a opção de delimitar a quantidade de arquivos listados 
+
+    .PARAMETER Path
+    Especifica um caminho para um local onde devem ser obtidos os arquivos.
+    O caminho padrão é o diretório atual.
+
+    .PARAMETER First
+    Especifica o número de arquivos que será retornado
+
+    .EXAMPLE
+    Get-GEOFilesOrdered
+    Lista todos os arquivos do tipo pdf (default ) sendo retornado a quantidade de 10 arquivos no caminho do diretório atual
+    
+    #>
     [CmdletBinding()]
     param(
         [string]$Path = ".\",
-        [int]$Last = 10,
-        [string]$FileType = 'pdf'
 
+        [ValidateRange(1,100)]
+        [int]$First = 10,
+
+        [ValidateSet("pdf","docx","xlsx","pptx")]
+        [string]$FileType = 'pdf'
     )
     BEGIN{
        
@@ -230,7 +254,7 @@ function Get-GEOFilesOrdered{
     }
         $result = Get-ChildItem @params|
         Sort-Object -Property LastWriteTime -Descending |
-        Select-Object -First $Last |
+        Select-Object -First $First |
         Select-Object Name,LastWriteTime
             
 
