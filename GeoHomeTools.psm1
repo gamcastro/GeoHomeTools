@@ -231,7 +231,7 @@ function Get-GEOFilesOrdered{
 
     .EXAMPLE
     Get-GEOFilesOrdered
-    Lista todos os arquivos do tipo pdf (default ) sendo retornado a quantidade de 10 arquivos no caminho do diretório atual
+    Lista todos os arquivos do tipo pdf (default ) sendo retornado a quantidade de 10 (default) arquivos no caminho do diretório atual (default).
     
     #>
     [CmdletBinding()]
