@@ -1,5 +1,5 @@
-﻿function Remove-GeoDownloadedVideos{
-<#
+﻿function Remove-GeoDownloadedVideos {
+    <#
 .SYNOPSIS
 Ferramenta para deletar arquivos de vídeos baixados
 
@@ -16,16 +16,36 @@ Retira com confirmacao, todos os arquivos de videos da pasta padrão $home\downl
 #>
     [Cmdletbinding()]
     param(
-        [string]$Path="$home\Downloads\*"
+        [string]$Path = "$home\Downloads\*"
     )
-    BEGIN{}
-    PROCESS{
-        Remove-Item -Path $Path -Include *.mp4,*.avi,*.mkv -Confirm -Force
+    BEGIN {}
+    PROCESS {
+        Remove-Item -Path $Path -Include *.mp4, *.avi, *.mkv -Confirm -Force
     }
-    END{}
+    END {}
 }
 
-function Remove-GeoEmptyFolder{
+function Remove-GeoEmptyFolder {
+    <#
+.SYNOPSIS
+Apaga o diretório especificado se ele estiver vazio.
+
+.DESCRIPTION
+O cmdlet 'Remove-GEOEmptyFolder' remove o diretório especificado se este
+estiver vazio, ou seja sem arquivos e nem diretórios dentro dele.
+
+.PARAMETER Path
+Específica o caminho do diretório a ser removido caso esteja vazio.
+O valor padrão é o diretório atual
+
+.EXAMPLE 
+Remove-GEOEmptyFolder
+Deleta o diretório atual se ele estiver vazio
+
+.EXAMPLE
+Remove-GEOEmprtyFolder -Path D:\Comum\Instseg
+Deleta o diretório D:\Comum\Instseg se o mesmo estiver vazio
+#>
     [Cmdletbinding()]
     param(
         [string]$Path = "\."
@@ -33,20 +53,20 @@ function Remove-GeoEmptyFolder{
     BEGIN {
   
     }
-    PROCESS{
+    PROCESS {
         Write-Verbose 'Verificando se o caminho dado é um diretório.'
         $obj = Test-Path $Path -PathType Container
-        if ($obj){
+        if ($obj) {
             Write-Verbose 'Realizando a contagem de objetos dentro do diretório informado'
             $contador = Get-ChildItem -Path $Path -Recurse | Measure-Object
             $contador = $contador.Count
         }
-        if ($contador -eq 0){
+        if ($contador -eq 0) {
             Write-Verbose "Removendo o diretório informado"
             Remove-Item $Path
         }
     }
-    END{
+    END {
 
     }
 
@@ -78,12 +98,12 @@ function Resize-Console {
     param (
         # Set the window width.
         [Parameter(ParameterSetName = 'CustomSize', Position = 0)]
-        [ValidateRange(1,[int]::MaxValue)]
+        [ValidateRange(1, [int]::MaxValue)]
         [int] $Width = $host.UI.RawUI.WindowSize.Width,
 
         # Set the window height.
         [Parameter(ParameterSetName = 'CustomSize', Position = 1)]
-        [ValidateRange(1,[int]::MaxValue)]
+        [ValidateRange(1, [int]::MaxValue)]
         [int] $Height = $host.UI.RawUI.WindowSize.Height,
 
         # Maximize the window.
@@ -97,7 +117,7 @@ function Resize-Console {
     [DllImport("user32.dll")]
     public static extern bool ShowWindowAsync(IntPtr hWnd, int nCmdShow);
 '@ -name 'Win32ShowWindowAsync' -namespace Win32Functions -passThru
-    if(($PSCmdlet.ParameterSetName -eq 'Maximize') -or ($PSCmdlet.ParameterSetName -eq 'Restore')) {
+    if (($PSCmdlet.ParameterSetName -eq 'Maximize') -or ($PSCmdlet.ParameterSetName -eq 'Restore')) {
 
         # get main window handle of the current process
         $MainWindowHandle = (Get-Process -id $pid).MainWindowHandle
@@ -151,26 +171,26 @@ function Get-WindowState {
     }
 }
 
-function Set-WindowPosition{
- param(
-     [int]$X,
-     [int]$Y,
-     [int]$Width,
-     [int]$Height
+function Set-WindowPosition {
+    param(
+        [int]$X,
+        [int]$Y,
+        [int]$Width,
+        [int]$Height
 
- )
+    )
     Add-Type -Name Window -Namespace Console -MemberDefinition @'
 [DllImport("Kernel32.dll")] 
 public static extern IntPtr GetConsoleWindow();
 [DllImport("user32.dll")]
 public static extern bool MoveWindow(IntPtr hWnd, int X, int Y, int W, int H); 
 '@
-$consoleHWND = [Console.Window]::GetConsoleWindow()
-Start-Sleep -Seconds 1
-[Console.Window]::MoveWindow($consoleHWND,$X,$Y,$Width,$Height)
+    $consoleHWND = [Console.Window]::GetConsoleWindow()
+    Start-Sleep -Seconds 1
+    [Console.Window]::MoveWindow($consoleHWND, $X, $Y, $Width, $Height)
 }
 
-function Start-GeoChrome{
+function Start-GeoChrome {
     [CmdletBinding()]
     param(
         [string]$Url
@@ -178,10 +198,11 @@ function Start-GeoChrome{
     BEGIN {
         $chromePath = 'C:\Program Files\Google\Chrome\Application\chrome.exe'
     }
-    PROCESS{
-        if (-Not $PSBoundParameters.ContainsKey('URL')){
+    PROCESS {
+        if (-Not $PSBoundParameters.ContainsKey('URL')) {
             Start-Process -FilePath $chromePath
-        } else {
+        }
+        else {
             Start-Process -FilePath $chromePath $Url
         }
     }
@@ -190,20 +211,20 @@ function Start-GeoChrome{
     }
 }
 
-function New-GeoAlarme{
+function New-GeoAlarme {
     [CmdletBinding()]
     param(
         [int]$Minutes
     )
-    BEGIN{
+    BEGIN {
         $alarme = $false
         $agora = Get-Date
     }
-    PROCESS{
-        while(-not ($alarme)){
-            if ($agora.AddMinutes($Minutes) -lt (Get-Date)){
+    PROCESS {
+        while (-not ($alarme)) {
+            if ($agora.AddMinutes($Minutes) -lt (Get-Date)) {
                 $alarme = $true
-                [console]::Beep(2000,1000)
+                [console]::Beep(2000, 1000)
             }
             Write-Progress -Activity "Alarme" -Status "Indo"
             Start-Sleep -Seconds 5
@@ -212,7 +233,7 @@ function New-GeoAlarme{
     END {}
 }
 
-function Get-GEOFilesOrdered{
+function Get-GEOFilesOrdered {
     <#
     .SYNOPSIS
     Lista arquivos de um determinado tipo por data de criação
@@ -238,35 +259,49 @@ function Get-GEOFilesOrdered{
     param(
         [string]$Path = ".\",
 
-        [ValidateRange(1,100)]
+        [ValidateRange(1, 100)]
         [int]$First = 10,
 
-        [ValidateSet("pdf","docx","xlsx","pptx")]
+        [ValidateSet("pdf", "docx", "xlsx", "pptx")]
         [string]$FileType = 'pdf'
     )
-    BEGIN{
+    BEGIN {
        
     }
-    PROCESS{
+    PROCESS {
         $params = @{'Path' = $Path
-        'Attributes' = 'Archive'
-        'Filter' = "*.$FileType"           
-    }
-        $result = Get-ChildItem @params|
+            'Attributes'   = 'Archive'
+            'Filter'       = "*.$FileType"           
+        }
+        $result = Get-ChildItem @params |
         Sort-Object -Property LastWriteTime -Descending |
         Select-Object -First $First |
-        Select-Object Name,LastWriteTime
+        Select-Object Name, LastWriteTime
             
 
-        foreach ($arquivo in $result){
-            $props = @{'Nome' = $arquivo.Name
-                    'DataHoraCriação' = $arquivo.LastWriteTime
+        foreach ($arquivo in $result) {
+            $props = @{'Nome'     = $arquivo.Name
+                'DataHoraCriação' = $arquivo.LastWriteTime
             }
             $obj = New-Object -TypeName psobject -Property $props
             Write-Output $obj
         }        
        
     }
-    END{}
+    END {}
+    
+}
+
+function Stop-GEOAudio {
+    [CmdletBinding()]
+    Param(
+
+    )
+    BEGIN {}
+    PROCESS {
+        
+        (new-object -com wscript.shell).SendKeys([char]173)
+    }
+    END {}
 }
 
