@@ -292,7 +292,7 @@ function Get-GEOFilesOrdered {
     
 }
 
-function Stop-GEOAudio {
+function Switch-GEOAudio {
     [CmdletBinding()]
     Param(
 
